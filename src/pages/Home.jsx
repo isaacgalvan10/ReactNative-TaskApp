@@ -1,11 +1,10 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, StatusBar } from 'react-native';
-import Header from '../components/Header';
 import StatusCards from '../components/StatusCards';
 import Tasks from '../components/Tasks';
 
-export default function Home() {
+export default (props) => {
   const styles = StyleSheet.create({
     home: {
       flex: 1,
@@ -40,20 +39,40 @@ export default function Home() {
       },
       shadowOpacity: .1,
       shadowRadius: 6.68
+    },
+    plus: {
+      fontSize: 26
     }
   });
+
+  const handleAddTask = () => {
+    props.setRoute('Create');
+  }
 
   return (
     <View style={styles.home}>
       <StatusBar backgroundColor="#221040" barStyle="light-content" />
       <View style={styles.top}>
         <View style={styles.container}>
-          <Header />
-          <StatusCards />
+          <StatusCards
+            currentTasks={props.currentTasks}
+            activeTask={props.activeTask}
+            currentRoute={props.currentRoute}
+            setRoute={props.setRoute}
+          />
         </View>
       </View>
-      <Tasks />
-      <TouchableOpacity style={styles.addTaskBtn}>
+      <Tasks
+        setRoute={props.setRoute}
+        currentTasks={props.currentTasks}
+        setTasks={props.setTasks}
+        activeTask={props.activeTask}
+        setActiveTask={props.setActiveTask}
+      />
+      <TouchableOpacity
+        style={styles.addTaskBtn}
+        onPress={handleAddTask}
+      >
         <Text style={styles.plus}>+</Text>
       </TouchableOpacity>
     </View>

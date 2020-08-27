@@ -1,8 +1,9 @@
 
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, Text, View, TouchableHighlight, ScrollView } from 'react-native';
 
-export default function Tasks() {
+export default (props) => {
+
   const styles = StyleSheet.create({
     tasks: {
       flex: 1,
@@ -39,27 +40,23 @@ export default function Tasks() {
     }
   });
 
-  const tasks = [
-    {
-      id: `${new Date().getTime()}_${Math.random() * Math.random()}`,
-      title: 'Clean your car'
-    },
-    {
-      id: `${new Date().getTime()}_${Math.random() * Math.random()}`,
-      title: 'Pay Light Bill'
-    },
-    {
-      id: `${new Date().getTime()}_${Math.random() * Math.random()}`,
-      title: 'Pay Water Bill'
-    }
-  ];
+  const handleTaskPress = (id) => {
+    props.setActiveTask(id);
+    props.setRoute('Edit');
+  }
 
   const showTasks = () => {
-    return tasks.map((task) => {
-      return (
-        <View style={styles.task} key={task.id}>
-          <Text style={styles.taskTitle}>{task.title}</Text>
-        </View>)
+    return props.currentTasks.map((task) => {
+      if (task.status === 'initiated') {
+        return (
+          <TouchableHighlight
+            style={styles.task}
+            key={task.id}
+            onPress={handleTaskPress.bind(null, task.id)}
+          >
+            <Text style={styles.taskTitle}>{task.title}</Text>
+          </TouchableHighlight>)
+      }
     })
   }
 
@@ -67,7 +64,9 @@ export default function Tasks() {
     <View style={styles.tasks}>
       <View style={styles.container}>
         <Text style={styles.sectionTitle}>Tasks</Text>
-        {showTasks()}
+        <ScrollView>
+          {showTasks()}
+        </ScrollView>
       </View>
     </View>
   );

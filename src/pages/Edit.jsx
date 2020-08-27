@@ -6,10 +6,10 @@ import { StyleSheet, Text, View, StatusBar, TouchableOpacity, TextInput } from '
 export default (props) => {
 
   const [formState, setFormState] = useState({
-    id: `${new Date().getTime()}_${Math.random() * Math.random()}`,
+    id: '',
     title: '',
     description: '',
-    status: 'initiated'
+    status: ''
   });
 
   const styles = StyleSheet.create({
@@ -77,12 +77,50 @@ export default (props) => {
     saveBtnTxt: {
       color: 'white',
       fontSize: 18
+    },
+    statusContainer: {
+      flexDirection: 'row'
+    },
+    statusBtn1: {
+      backgroundColor: formState.status === 'completed' ? '#2cdb4c' : 'white',
+      padding: 10,
+      marginBottom: 10,
+      borderWidth: 1,
+      borderColor: '#d1d1d1',
+      borderRadius: 5,
+      marginRight: 10
+    },
+    statusBtn2: {
+      backgroundColor: formState.status === 'initiated' ? 'yellow' : 'white',
+      padding: 10,
+      marginBottom: 10,
+      borderWidth: 1,
+      borderColor: '#d1d1d1',
+      borderRadius: 5,
+      marginRight: 10
+    },
+    statusBtn3: {
+      backgroundColor: formState.status === 'deleted' ? 'red' : 'white',
+      padding: 10,
+      marginBottom: 10,
+      borderWidth: 1,
+      borderColor: '#d1d1d1',
+      borderRadius: 5,
+      marginRight: 10
     }
   });
 
   const handleBackBtn = () => {
     props.setRoute('Home');
-  }
+  };
+
+  useEffect(() => {
+    const task = props.currentTasks.filter((item) => {
+      return item.id == props.activeTask
+    })[0];
+
+    setFormState(task);
+  }, []);
 
   const handleChange = (name, text) => {
     const newState = Object.assign({}, formState, {
@@ -92,7 +130,11 @@ export default (props) => {
   }
 
   const submit = () => {
-    let newTasks = [...props.currentTasks, formState];
+    let taskIndex = props.currentTasks.findIndex(
+      x => x.id === props.activeTask
+    );
+    let newTasks = [...props.currentTasks];
+    newTasks.splice(taskIndex, 1, formState);
     props.setTasks(newTasks);
     props.setRoute('Home');
   }
@@ -111,7 +153,7 @@ export default (props) => {
       </View>
       <View style={styles.formContainer}>
         <View style={styles.container}>
-          <Text style={styles.sectionTitle}>Create Task</Text>
+          <Text style={styles.sectionTitle}>Edit Task</Text>
           <Text style={styles.label}>Title</Text>
           <TextInput
             style={styles.textInput}
@@ -127,6 +169,27 @@ export default (props) => {
             onChangeText={(text) => handleChange('description', text)}
             value={formState.description}
           />
+          <Text style={styles.label}>Status</Text>
+          <View style={styles.statusContainer}>
+            <TouchableOpacity
+              style={styles.statusBtn1}
+              onPress={() => handleChange('status', 'completed')}
+            >
+              <Text style={styles.statusText}>Completed</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.statusBtn2}
+              onPress={() => handleChange('status', 'initiated')}
+            >
+              <Text style={styles.statusText}>Initiated</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.statusBtn3}
+              onPress={() => handleChange('status', 'deleted')}
+            >
+              <Text style={styles.statusText}>Delete</Text>
+            </TouchableOpacity>
+          </View>
           <TouchableOpacity
             style={styles.saveBtn}
             onPress={submit}

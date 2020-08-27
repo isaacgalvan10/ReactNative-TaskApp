@@ -1,8 +1,8 @@
 
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
-export default function StatusCards() {
+export default (props) => {
   const styles = StyleSheet.create({
     statusCards: {
       flexDirection: 'row',
@@ -47,17 +47,49 @@ export default function StatusCards() {
     }
   });
 
+  const totalCompleted = () => {
+    let number = props.currentTasks.filter((item) => item.status == 'completed')
+
+    number = number.length;
+    return number
+  };
+
+  const totalInitiated = () => {
+    let number = props.currentTasks.filter((item) => item.status == 'initiated')
+
+    number = number.length;
+    return number
+  };
+
+  const totalDeleted = () => {
+    let number = props.currentTasks.filter((item) => item.status == 'deleted')
+
+    number = number.length;
+    return number
+  };
+
+  const handleCompletedPress = () => {
+    props.setRoute('Completed');
+  }
+
+  const handleDeletedPress = () => {
+    props.setRoute('Deleted');
+  }
+
   return (
     <View style={styles.statusCards}>
       <View style={styles.column}>
-        <View style={styles.cardCompleted}>
+        <TouchableOpacity
+          style={styles.cardCompleted}
+          onPress={handleCompletedPress}
+        >
           <View>
             <Text style={styles.title}>Completed</Text>
           </View>
           <View style={styles.numberContainer}>
-            <Text style={styles.number}>100</Text>
+            <Text style={styles.number}>{totalCompleted()}</Text>
           </View>
-        </View>
+        </TouchableOpacity>
       </View>
       <View style={styles.column}>
         <View style={styles.cardInProgress}>
@@ -65,19 +97,22 @@ export default function StatusCards() {
             <Text style={styles.title}>Initiated</Text>
           </View>
           <View style={styles.numberContainer}>
-            <Text style={styles.number}>100</Text>
+            <Text style={styles.number}>{totalInitiated()}</Text>
           </View>
         </View>
       </View>
       <View style={styles.column}>
-        <View style={styles.cardDeleted}>
+        <TouchableOpacity
+          style={styles.cardDeleted}
+          onPress={handleDeletedPress}
+        >
           <View>
             <Text style={styles.title}>Deleted</Text>
           </View>
           <View style={styles.numberContainer}>
-            <Text style={styles.number}>100</Text>
+            <Text style={styles.number}>{totalDeleted()}</Text>
           </View>
-        </View>
+        </TouchableOpacity>
       </View>
     </View>
   );
